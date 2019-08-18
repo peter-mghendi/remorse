@@ -36,8 +36,12 @@ func (a *Application) Init() {
 
 // Run starts the Application.
 func (a *Application) Run() error {
-	fmt.Println("Remorse is starting up.\nPress ESC to exit.")
-	time.Sleep(3 * time.Second)
+	fmt.Print("Welcome to remorse.\nPress ESC to exit.\nLoading")
+	for i := 0; i < 3; i++ {
+		time.Sleep(500 * time.Millisecond)
+		fmt.Print(".")
+		time.Sleep(500 * time.Millisecond)
+	}
 	screen.Clear()
 	screen.MoveTopLeft()
 

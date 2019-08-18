@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/inancgumus/screen"
 	a "github.com/l3njo/remorse/app"
 
 	"github.com/eiannone/keyboard"
@@ -17,6 +18,8 @@ var signals chan os.Signal
 // cleanup handles application shutdown.
 func cleanup() {
 	keyboard.Close()
+	screen.Clear()
+	screen.MoveTopLeft()
 	fmt.Println("\nGoodbye!")
 }
 

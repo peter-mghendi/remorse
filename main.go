@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
 	a "github.com/l3njo/remorse/app"
 
 	"github.com/eiannone/keyboard"
@@ -31,6 +33,9 @@ func init() {
 func main() {
 	app := &a.Application{}
 	app.Init()
-	app.Run()
+	if err := app.Run(); err != nil {
+		log.Fatalf("\n%s", err)
+	}
+
 	cleanup()
 }

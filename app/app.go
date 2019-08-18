@@ -3,25 +3,27 @@ package app
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/alwindoss/morse"
 	"github.com/eiannone/keyboard"
+	"github.com/inancgumus/screen"
 )
 
 // Application represents the application.
 type Application struct {
+	cache []string
 }
 
 // writeMorse outputs the provided rune in morse code.
-func writeMorse(c rune) error {
+func getMorse(c rune) (string, error) {
 	h := morse.NewHacker()
-	morseCode, err := h.Encode(strings.NewReader(string(c)))	
+	morseCode, err := h.Encode(strings.NewReader(string(c)))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	fmt.Printf("%s ", string(morseCode))
-	return nil
+	return string(morseCode), nil
 }
 
 // Init sets up the application.
@@ -33,21 +35,43 @@ func (a *Application) Init() {
 }
 
 // Run starts the Application.
-func (a *Application) Run() {
-	fmt.Println("Remorse is running.\nPress ESC to exit.\n")
+func (a *Application) Run() error {
+	fmt.Println("Remorse is starting up.\nPress ESC to exit.")
+	time.Sleep(3 * time.Second)
+	screen.Clear()
+	screen.MoveTopLeft()
+
 	for {
 		char, key, err := keyboard.GetKey()
-		if (err != nil) {
-			panic(err)
-		} else if (key == keyboard.KeyEsc) {
+		if err != nil {
+			return err
+		} else if key == keyboard.KeyEsc {
 			break
-		} else if (key == keyboard.KeySpace) {
+		} else if key == keyboard.KeySpace {
 			fmt.Print("/ ")
 			continue
-		}else if (key == keyboard.KeyEnter) {
+		} else if key == keyboard.KeyBackspace {
+			if len(a.cache) <= 0 {
+				continue
+			}
+
+			a.cache = a.cache[:len(a.cache)-1]
+			screen.Clear()
+			screen.MoveTopLeft()
+			fmt.Printf("%s ", strings.Join(a.cache, " "))
+			continue
+		} else if key == keyboard.KeyEnter {
 			fmt.Println()
 			continue
 		}
-		writeMorse(char)
+
+		str, err := getMorse(char)
+		if err != nil {
+			return err
+		}
+
+		a.cache = append(a.cache, str)
+		fmt.Printf("%s ", str)
 	}
+	return nil
 }
